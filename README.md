@@ -293,9 +293,8 @@ This project is licensed under the MIT License.
 
 ## 👨‍💻 Author
 
-**Milind Lanje**
-- GitHub: [@Milind1234-cpu](https://github.com/Milind1234-cpu)
-- Email: blackgear2005@gmail.com
+**Kishor Mugale**
+- GitHub: [@kishormugale](https://github.com/kishormugale)
 
 ## 🙏 Acknowledgments
 
