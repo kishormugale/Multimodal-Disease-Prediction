@@ -1,0 +1,575 @@
+{
+  "workspace_id": null,
+  "collection_id": null,
+  "environment_id": null,
+  "collection": {
+    "info": {
+      "name": "KDM Care Hospital – AI Disease Prediction API",
+      "description": "Complete API collection for the KDM Care Hospital AI Multimodal Disease Prediction System. Covers authentication, patients, predictions (tabular + image), reports, and model status endpoints.",
+      "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "variable": [
+      {
+        "key": "base_url",
+        "value": "http://localhost:8000/api",
+        "type": "string"
+      },
+      {
+        "key": "access_token",
+        "value": "",
+        "type": "string"
+      }
+    ],
+    "item": [
+      {
+        "name": "Auth",
+        "item": [
+          {
+            "name": "Login – valid credentials",
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "exec": [
+                    "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                    "pm.test('Has access_token', () => {",
+                    "  const body = pm.response.json();",
+                    "  pm.expect(body).to.have.property('access_token');",
+                    "  pm.expect(body.token_type).to.eql('bearer');",
+                    "  pm.collectionVariables.set('access_token', body.access_token);",
+                    "});"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ],
+            "request": {
+              "method": "POST",
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": {
+                "mode": "raw",
+                "raw": "{\"email\": \"doctor@kdmcare.com\", \"password\": \"password123\"}"
+              },
+              "url": "{{base_url}}/auth/login"
+            }
+          },
+          {
+            "name": "Login – short password (expect 401)",
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "exec": [
+                    "pm.test('Status 401', () => pm.response.to.have.status(401));",
+                    "pm.test('Has detail field', () => {",
+                    "  const body = pm.response.json();",
+                    "  pm.expect(body).to.have.property('detail');",
+                    "});"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ],
+            "request": {
+              "method": "POST",
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": {
+                "mode": "raw",
+                "raw": "{\"email\": \"doctor@kdmcare.com\", \"password\": \"abc\"}"
+              },
+              "url": "{{base_url}}/auth/login"
+            }
+          },
+          {
+            "name": "Login – missing password (expect 401)",
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "exec": [
+                    "pm.test('Status 401', () => pm.response.to.have.status(401));"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ],
+            "request": {
+              "method": "POST",
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": {
+                "mode": "raw",
+                "raw": "{\"email\": \"doctor@kdmcare.com\"}"
+              },
+              "url": "{{base_url}}/auth/login"
+            }
+          },
+          {
+            "name": "Forgot Password – valid email",
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "exec": [
+                    "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                    "pm.test('Has success field', () => {",
+                    "  const body = pm.response.json();",
+                    "  pm.expect(body).to.have.property('success');",
+                    "  pm.expect(body.success).to.be.true;",
+                    "  pm.expect(body).to.have.property('message');",
+                    "});"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ],
+            "request": {
+              "method": "POST",
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": {
+                "mode": "raw",
+                "raw": "{\"email\": \"doctor@kdmcare.com\"}"
+              },
+              "url": "{{base_url}}/auth/forgot-password"
+            }
+          },
+          {
+            "name": "Forgot Password – invalid email format (expect 422)",
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "exec": [
+                    "pm.test('Status 422', () => pm.response.to.have.status(422));"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ],
+            "request": {
+              "method": "POST",
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": {
+                "mode": "raw",
+                "raw": "{\"email\": \"not-an-email\"}"
+              },
+              "url": "{{base_url}}/auth/forgot-password"
+            }
+          },
+          {
+            "name": "Reset Password – valid token",
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "exec": [
+                    "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                    "pm.test('Has success field', () => {",
+                    "  const body = pm.response.json();",
+                    "  pm.expect(body).to.have.property('success');",
+                    "  pm.expect(body.success).to.be.true;",
+                    "});"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ],
+            "request": {
+              "method": "POST",
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": {
+                "mode": "raw",
+                "raw": "{\"token\": \"test-token-123\", \"new_password\": \"newpassword123\"}"
+              },
+              "url": "{{base_url}}/auth/reset-password"
+            }
+          },
+          {
+            "name": "Reset Password – short password (expect 400)",
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "exec": [
+                    "pm.test('Status 400', () => pm.response.to.have.status(400));",
+                    "pm.test('Has detail about password length', () => {",
+                    "  const body = pm.response.json();",
+                    "  pm.expect(body.detail).to.include('4 characters');",
+                    "});"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ],
+            "request": {
+              "method": "POST",
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": {
+                "mode": "raw",
+                "raw": "{\"token\": \"test-token-123\", \"new_password\": \"abc\"}"
+              },
+              "url": "{{base_url}}/auth/reset-password"
+            }
+          },
+          {
+            "name": "Verify Reset Token – valid token",
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "exec": [
+                    "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                    "pm.test('Has valid field', () => {",
+                    "  const body = pm.response.json();",
+                    "  pm.expect(body).to.have.property('valid');",
+                    "});"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ],
+            "request": {
+              "method": "GET",
+              "url": "{{base_url}}/auth/verify-reset-token/test-token-123"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Patients",
+        "item": [
+          {
+            "name": "GET /patients",
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "exec": [
+                    "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                    "pm.test('Returns array', () => {",
+                    "  const body = pm.response.json();",
+                    "  pm.expect(body).to.be.an('array');",
+                    "});",
+                    "pm.test('Each patient has required fields', () => {",
+                    "  const body = pm.response.json();",
+                    "  if (body.length > 0) {",
+                    "    const p = body[0];",
+                    "    pm.expect(p).to.have.all.keys('id','name','age','gender','status','lastVisit');",
+                    "  }",
+                    "});"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ],
+            "request": {
+              "method": "GET",
+              "url": "{{base_url}}/patients"
+            }
+          },
+          {
+            "name": "POST /patients – create patient",
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "exec": [
+                    "pm.test('Status 201', () => pm.response.to.have.status(201));",
+                    "pm.test('Patient has PT- id prefix', () => {",
+                    "  const body = pm.response.json();",
+                    "  pm.expect(body.id).to.match(/^PT-/);",
+                    "  pm.collectionVariables.set('patient_id', body.id);",
+                    "});"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ],
+            "request": {
+              "method": "POST",
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": {
+                "mode": "raw",
+                "raw": "{\"name\": \"John Doe\", \"age\": 45, \"gender\": \"Male\", \"status\": \"Stable\"}"
+              },
+              "url": "{{base_url}}/patients"
+            }
+          },
+          {
+            "name": "POST /patients – missing field (expect 422)",
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "exec": [
+                    "pm.test('Status 422', () => pm.response.to.have.status(422));"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ],
+            "request": {
+              "method": "POST",
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": {
+                "mode": "raw",
+                "raw": "{\"name\": \"Jane Doe\", \"age\": 30}"
+              },
+              "url": "{{base_url}}/patients"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Predict – Tabular",
+        "item": [
+          {
+            "name": "POST /predict/heart-disease",
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "exec": [
+                    "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                    "pm.test('PredictionResponse schema', () => {",
+                    "  const body = pm.response.json();",
+                    "  pm.expect(['Positive','Negative']).to.include(body.result);",
+                    "  pm.expect(body.confidence).to.be.within(0, 100);",
+                    "  pm.expect(['High','Medium','Low']).to.include(body.risk);",
+                    "  pm.expect(body.suggestion).to.be.a('string').and.not.empty;",
+                    "});"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ],
+            "request": {
+              "method": "POST",
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": {
+                "mode": "raw",
+                "raw": "{\"age\": 55, \"sex\": 1, \"chest_pain\": 3, \"bp\": 140, \"cholesterol\": 250, \"blood_sugar\": 0, \"restecg\": 1, \"heart_rate\": 150, \"exang\": 0, \"oldpeak\": 2.3, \"slope\": 2, \"ca\": 0, \"thal\": 2}"
+              },
+              "url": "{{base_url}}/predict/heart-disease"
+            }
+          },
+          {
+            "name": "POST /predict/diabetes",
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "exec": [
+                    "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                    "pm.test('PredictionResponse schema', () => {",
+                    "  const body = pm.response.json();",
+                    "  pm.expect(['Positive','Negative']).to.include(body.result);",
+                    "  pm.expect(body.confidence).to.be.within(0, 100);",
+                    "  pm.expect(['High','Medium','Low']).to.include(body.risk);",
+                    "  pm.expect(body.suggestion).to.be.a('string').and.not.empty;",
+                    "});"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ],
+            "request": {
+              "method": "POST",
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": {
+                "mode": "raw",
+                "raw": "{\"pregnancies\": 2, \"glucose\": 138, \"bp\": 62, \"skin_thickness\": 35, \"insulin\": 0, \"bmi\": 33.6, \"dpf\": 0.627, \"age\": 47}"
+              },
+              "url": "{{base_url}}/predict/diabetes"
+            }
+          },
+          {
+            "name": "POST /predict/unknown-disease (expect 404)",
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "exec": [
+                    "pm.test('Status 404', () => pm.response.to.have.status(404));"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ],
+            "request": {
+              "method": "POST",
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": {
+                "mode": "raw",
+                "raw": "{}"
+              },
+              "url": "{{base_url}}/predict/unknown-disease"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Predict – Image",
+        "item": [
+          {
+            "name": "POST /predict/brain-tumor (no file – expect 422)",
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "exec": [
+                    "pm.test('Status 422', () => pm.response.to.have.status(422));"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ],
+            "request": {
+              "method": "POST",
+              "header": [],
+              "body": {
+                "mode": "formdata",
+                "formdata": []
+              },
+              "url": "{{base_url}}/predict/brain-tumor"
+            }
+          },
+          {
+            "name": "POST /predict/pneumonia (no file – expect 422)",
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "exec": [
+                    "pm.test('Status 422', () => pm.response.to.have.status(422));"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ],
+            "request": {
+              "method": "POST",
+              "header": [],
+              "body": {
+                "mode": "formdata",
+                "formdata": []
+              },
+              "url": "{{base_url}}/predict/pneumonia"
+            }
+          },
+          {
+            "name": "POST /predict/skin-cancer (no file – expect 422)",
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "exec": [
+                    "pm.test('Status 422', () => pm.response.to.have.status(422));"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ],
+            "request": {
+              "method": "POST",
+              "header": [],
+              "body": {
+                "mode": "formdata",
+                "formdata": []
+              },
+              "url": "{{base_url}}/predict/skin-cancer"
+            }
+          },
+          {
+            "name": "POST /predict/eye-disease (no file – expect 422)",
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "exec": [
+                    "pm.test('Status 422', () => pm.response.to.have.status(422));"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ],
+            "request": {
+              "method": "POST",
+              "header": [],
+              "body": {
+                "mode": "formdata",
+                "formdata": []
+              },
+              "url": "{{base_url}}/predict/eye-disease"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Reports",
+        "item": [
+          {
+            "name": "GET /reports",
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "exec": [
+                    "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                    "pm.test('Returns array', () => {",
+                    "  const body = pm.response.json();",
+                    "  pm.expect(body).to.be.an('array');",
+                    "});",
+                    "pm.test('Reports ordered newest first', () => {",
+                    "  const body = pm.response.json();",
+                    "  if (body.length > 1) {",
+                    "    const t1 = new Date(body[0].timestamp).getTime();",
+                    "    const t2 = new Date(body[1].timestamp).getTime();",
+                    "    pm.expect(t1).to.be.at.least(t2);",
+                    "  }",
+                    "});"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ],
+            "request": {
+              "method": "GET",
+              "url": "{{base_url}}/reports"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Models Status",
+        "item": [
+          {
+            "name": "GET /models/status",
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "exec": [
+                    "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                    "pm.test('Contains all 6 disease IDs', () => {",
+                    "  const body = pm.response.json();",
+                    "  const expected = ['brain-tumor','pneumonia','skin-cancer','eye-disease','heart-disease','diabetes'];",
+                    "  expected.forEach(id => {",
+                    "    pm.expect(body).to.have.property(id);",
+                    "    pm.expect(['real','mock']).to.include(body[id]);",
+                    "  });",
+                    "});"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ],
+            "request": {
+              "method": "GET",
+              "url": "{{base_url}}/models/status"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

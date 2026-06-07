@@ -1,0 +1,85 @@
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: ['./index.html', './src/**/*.{js,jsx,ts,tsx}'],
+  theme: {
+    extend: {
+      colors: {
+        primary: {
+          DEFAULT: '#003d9b',
+          container: '#0052cc',
+        },
+        'on-primary': '#ffffff',
+        'on-primary-container': '#c4d2ff',
+        secondary: {
+          DEFAULT: '#4c5d8d',
+          container: '#b6c8fe',
+        },
+        'on-secondary': '#ffffff',
+        'on-secondary-container': '#415382',
+        tertiary: {
+          DEFAULT: '#7b2600',
+          container: '#a33500',
+        },
+        'on-tertiary': '#ffffff',
+        'on-tertiary-container': '#ffc6b2',
+        'tertiary-fixed': '#ffdbcf',
+        'on-tertiary-fixed': '#380d00',
+        'on-tertiary-fixed-variant': '#812800',
+        error: {
+          DEFAULT: '#ba1a1a',
+          container: '#ffdad6',
+        },
+        'on-error': '#ffffff',
+        'on-error-container': '#93000a',
+        surface: {
+          DEFAULT: '#f7f9fb',
+          dim: '#d8dadc',
+          bright: '#f7f9fb',
+          'container-lowest': '#ffffff',
+          'container-low': '#f2f4f6',
+          container: '#eceef0',
+          'container-high': '#e6e8ea',
+          'container-highest': '#e0e3e5',
+        },
+        'on-surface': '#191c1e',
+        'on-surface-variant': '#434654',
+        outline: {
+          DEFAULT: '#737685',
+          variant: '#c3c6d6',
+        },
+        'inverse-surface': '#2d3133',
+        'inverse-on-surface': '#eff1f3',
+        'inverse-primary': '#b2c5ff',
+        'surface-tint': '#0c56d0',
+        'primary-fixed': '#dae2ff',
+        'primary-fixed-dim': '#b2c5ff',
+        'on-primary-fixed': '#001848',
+        'on-primary-fixed-variant': '#0040a2',
+        'secondary-fixed': '#dae2ff',
+        'secondary-fixed-dim': '#b4c5fb',
+        'on-secondary-fixed': '#021945',
+        'on-secondary-fixed-variant': '#344573',
+        'tertiary-fixed-dim': '#ffb59b',
+      },
+      fontFamily: {
+        headline: ['Manrope', 'sans-serif'],
+        body: ['Inter', 'sans-serif'],
+        label: ['Inter', 'sans-serif'],
+      },
+      animation: {
+        'fade-in-up': 'fadeInUp 0.5s ease forwards',
+        'fade-in-up-delay-1': 'fadeInUp 0.5s ease 0.1s forwards',
+        'fade-in-up-delay-2': 'fadeInUp 0.5s ease 0.2s forwards',
+        'fade-in-up-delay-3': 'fadeInUp 0.5s ease 0.3s forwards',
+        'spin-slow': 'spin 8s linear infinite',
+      },
+      keyframes: {
+        fadeInUp: {
+          from: { opacity: '0', transform: 'translateY(12px)' },
+          to: { opacity: '1', transform: 'translateY(0)' },
+        },
+      },
+    },
+  },
+  plugins: [],
+}
